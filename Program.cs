@@ -29,6 +29,8 @@ namespace BaD2024_Puzzle
             //Вивід результатів
             Console.WriteLine("Найдовша послідовність:");
             Console.WriteLine(bestSequence);
+            Console.WriteLine("Довжина найдовшої послідовності:");
+            Console.WriteLine(bestSequence.Length);
             Console.WriteLine("Ланцюжок фрагментів:");
             Console.WriteLine(string.Join(" -> ", bestChain));
             Console.ReadKey();
