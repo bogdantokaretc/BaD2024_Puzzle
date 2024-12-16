@@ -10,16 +10,28 @@ namespace BaD2024_Puzzle
 
             // Змінні для збереження результату
             StringBuilder bestSequence = new();
-            List<string> bestChain = [];
+            List<string> bestChain = [], tempBestChain = [];
+            //Колекція для ітерацій та змін
+            List<string> currentFragments = new(fragments);
 
-            //Визначення стартового фрагменту послідовності
-            var startFragment = fragments[0];
-            fragments.RemoveAt(0);
-            List<string> remainingFragments = new(fragments);
+            for (int i = 0; i < fragments.Count; i++)
+            {
+                //Визначення стартового фрагменту послідовності
+                var startFragment = currentFragments[i];
+                currentFragments.RemoveAt(i);
+                List<string> remainingFragments = new(currentFragments);
 
-            //Пошук ланцюга
-            FindLongestChain(remainingFragments, [startFragment]);
+                //Пошук ланцюга
+                FindLongestChain(remainingFragments, [startFragment]);
+                currentFragments.AddRange(fragments);
 
+                if (tempBestChain.Count>=bestChain.Count)
+                {
+                    bestChain.Clear();
+                    bestChain.AddRange(tempBestChain);
+                }
+            }
+            
             // Формування послідовності
             for (int i = 0; i < bestChain.Count; i++)
             {
@@ -35,14 +47,12 @@ namespace BaD2024_Puzzle
             Console.WriteLine(string.Join(" -> ", bestChain));
             Console.ReadKey();
 
-
-
             List<string> FindLongestChain(List<string> remainingFragments, List<string> currentChain)
             {
                 if (remainingFragments.Count == 0)
                 {
-                    bestChain.AddRange(currentChain);
-                    return bestChain;
+                    tempBestChain.AddRange(currentChain);
+                    return tempBestChain;
                 }
                 else
                 {
@@ -52,18 +62,19 @@ namespace BaD2024_Puzzle
                         if (remainingFragments[i].StartsWith(currentChain[^1][^2..]))
                         {
                             currentChain.Add(remainingFragments[i]);
-                            fragments.Remove(remainingFragments[i]);
+                            currentFragments.Remove(remainingFragments[i]);
                         }
                         //Якщо перші дві цифри ланцюга
                         else if (currentChain[0].StartsWith(remainingFragments[i][^2..]))
                         {
                             currentChain.Insert(0, remainingFragments[i]);
-                            fragments.Remove(remainingFragments[i]);
+                            currentFragments.Remove(remainingFragments[i]);
                         }
                     }
+                    tempBestChain.Clear();
                     remainingFragments.Clear();
                 }
-                return FindLongestChain(fragments, currentChain);
+                return FindLongestChain(currentFragments, currentChain);
             }
         }
     }
